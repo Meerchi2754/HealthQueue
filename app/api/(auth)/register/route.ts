@@ -6,10 +6,10 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { email, name, password } = body;
-    
-    if (!email || !password) {
+
+    if (!email || !password || !name) {
       return NextResponse.json(
-        { message: "Email and Password required" },
+        { message: "Email, Name and Password required" },
         { status: 400 },
       );
     }
@@ -29,11 +29,11 @@ export async function POST(req: Request) {
 
     const response = await prisma.user.create({
       data: {
-        name: name,
-        email: email,
+        name,
+        email,
         password: hashedPassword,
       },
-      omit: { password },
+      omit: { password: true },
     });
     return NextResponse.json(response, { status: 201 });
   } catch (error) {

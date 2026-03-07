@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     if (!isMatch) {
       return NextResponse.json(
-        { message: "Password Mismatch" },
+        { message: "Invalid credentials" },
         { status: 401 },
       );
     }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: "Login Successfull", data: rest },
-      { status: 201 },
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 400 });
