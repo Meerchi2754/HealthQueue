@@ -7,17 +7,98 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id          Int     @unique @default(autoincrement())
-  name        String
-  email       String  @unique
-  password    String
-  phonenumber String?
-  role        Role    @default(PATIENT)
+model Users {
+  id            Int            @id @unique @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  phonenumber   String?
+  role          Role           @default(PATIENT)
+  doctorDetails DoctorDetails?
+
+  patientAppointments Appointment[] @relation("PatientAppointments")
+  doctorAppointments  Appointment[] @relation("DoctorAppointments")
+  appointments        Appointment[]
+}
+
+model DoctorDetails {
+  id          Int      @id @default(autoincrement())
+  doctorId    Int      @unique
+  speciality  String?
+  fees        Int?
+  degree      String[]
+  timeSlot    String?
+  startTime   Int?
+  endTime     Int?
+  isAvailable Boolean?
+  user        Users    @relation(fields: [doctorId], references: [id])
+}
+
+model Appointment {
+  id Int @id @default(autoincrement())
+
+  patientId Int
+  doctorId  Int
+
+  patientName   String
+  gender        Gender
+  paymentMethod PaymentMethod
+
+  slotTime String
+  date     String
+
+  status AppointmentStatus @default(PENDING)
+
+  patient Users @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctor  Users @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  createdAt     DateTime      @default(now())
+  users         Users?        @relation(fields: [usersId], references: [id])
+  usersId       Int?
+  payment       Payment?
+  paymentStatus PaymentStatus @default(CREATED)
+}
+
+model Payment {
+  id                Int           @id @default(autoincrement())
+  appointmentId     Int           @unique
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amount            Int
+  currency          String        @default("INR")
+  status            PaymentStatus @default(CREATED)
+  appointment       Appointment   @relation(fields: [appointmentId], references: [id])
+  createdAt         DateTime      @default(now())
 }
 
 enum Role {
   PATIENT
   ADMIN
   DOCTOR
+  CLINIC
+}
+
+enum AppointmentStatus {
+  REJECTED
+  CONFIRMED
+  PENDING
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  preferNotToSay
+}
+
+enum PaymentMethod {
+  online
+  cash
+  other
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
 }

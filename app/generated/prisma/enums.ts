@@ -12,7 +12,45 @@
 export const Role = {
   PATIENT: 'PATIENT',
   ADMIN: 'ADMIN',
-  DOCTOR: 'DOCTOR'
+  DOCTOR: 'DOCTOR',
+  CLINIC: 'CLINIC'
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const AppointmentStatus = {
+  REJECTED: 'REJECTED',
+  CONFIRMED: 'CONFIRMED',
+  PENDING: 'PENDING'
+} as const
+
+export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+
+
+export const Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER',
+  preferNotToSay: 'preferNotToSay'
+} as const
+
+export type Gender = (typeof Gender)[keyof typeof Gender]
+
+
+export const PaymentMethod = {
+  online: 'online',
+  cash: 'cash',
+  other: 'other'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const PaymentStatus = {
+  CREATED: 'CREATED',
+  PAID: 'PAID',
+  FAILED: 'FAILED'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]

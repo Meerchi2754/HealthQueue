@@ -10,11 +10,15 @@ export default function LoginPage() {
 
   const loginLogic = async () => {
     console.log("start");
+    console.log("EMAIL", email);
+    console.log("PASSWORD", password);
+
     const res = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+
       body: JSON.stringify({ email: email, password: password }),
     });
     const data = await res.json();
@@ -22,7 +26,7 @@ export default function LoginPage() {
     setEmail("");
     setPassword("");
     console.log("password");
-    router.push("/");
+    router.push("/dashboard/user");
   };
 
   return (

@@ -1,9 +1,13 @@
+import { createToken } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
+
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    // const cookie = await cookies();
     const body = await req.json();
     const { email, password } = body;
 
@@ -14,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const response = await prisma.user.findUnique({
+    const response = await prisma.users.findUnique({
       where: {
         email,
       },
@@ -31,19 +35,33 @@ export async function POST(req: NextRequest) {
       );
     }
     const isMatch = await bcrypt.compare(password, response.password);
-
     if (!isMatch) {
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 },
       );
     }
-    const { password: _, ...rest } = response;
+    response.password = "";
+    const token = createToken({
+      id: response.id,
+      email: response.email,
+      role: response.role,
+    });
 
-    return NextResponse.json(
-      { message: "Login Successfull", data: rest },
+    const res = NextResponse.json(
+      { message: "Login Successful", data: response },
       { status: 200 },
     );
+
+    res.cookies.set("token", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 7,
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    return res;
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 400 });
   }

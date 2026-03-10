@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, name, password } = body;
+    const { email, name, password, role } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { email },
     });
 
@@ -26,19 +26,35 @@ export async function POST(req: Request) {
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    const response = await prisma.user.create({
+    const response = await prisma.users.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        role: role,
       },
       omit: { password: true },
     });
-    return NextResponse.json(response, { status: 201 });
+
+    let initaliseDoctorDetails = null;
+    if (role === "DOCTOR") {
+      initaliseDoctorDetails = await prisma.doctorDetails.create({
+        data: {
+          doctorId: response.id,
+        },
+      });
+      if (!initaliseDoctorDetails) {
+        return NextResponse.json(
+          { message: "Doctor Detail has not been created!" },
+          { status: 400 },
+        );
+      }
+    }
+
+    return NextResponse.json({ data: response }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { message: "Something went wrong" },
+      { message: "Something went wrong", error: error },
       { status: 500 },
     );
   }
