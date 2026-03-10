@@ -2,48 +2,99 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 export function Navbar() {
+  const router = useRouter();
   const pathname = usePathname();
   const isActive = (path: string) => pathname.includes(path);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const res = await fetch("/api/me");
+      const data = await res.json();
+      setIsLoggedIn(data.loggedIn);
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+      });
+      setIsLoggedIn(false);
+      router.push("/dashboard/user"); // redirect
+    } catch (error) {
+      console.log("Logout failed");
+    }
+  };
   return (
     <>
-      <div className="flex flex-row gap-3 justify-between">
-        <div>
-          <h2>HealthQueue</h2>
+      <div className="flex flex-row gap-3 justify-between px-10 py-4 shadow-2xs">
+        <div className="text-2xl font-bold">
+          <h2>
+            Health<span className="text-blue-600">Queue</span>
+          </h2>
         </div>
-        <ul className="flex flex-row gap-3">
+        <ul className="flex flex-row gap-3 items-center font-bold ">
           <Link
             href="/dashboard/user"
-            className={
-              isActive("/dashboard/user") ? "text-blue-500 font-bold" : ""
-            }
+            className={`hover:text-blue-800 ${
+              isActive("/dashboard/user") ? "text-blue-600 font-bold" : ""
+            }`}
           >
             Home
           </Link>
           <Link
             href="/appointment"
-            className={
-              isActive("/appointment") ? "text-blue-500 font-bold" : ""
-            }
+            className={`hover:text-blue-800 ${
+              isActive("/appointment") ? "text-blue-600 font-bold" : ""
+            }`}
           >
             Appointment
           </Link>
           <Link
             href="/history"
-            className={isActive("/history") ? "text-blue-500 font-bold" : ""}
+            className={`hover:text-blue-800 ${
+              isActive("/history") ? "text-blue-600 font-bold" : ""
+            }`}
           >
             History
           </Link>
           <Link
             href="/about"
-            className={isActive("/about") ? "text-blue-500 font-bold" : ""}
+            className={`hover:text-blue-800 ${
+              isActive("/about") ? "text-blue-600 font-bold" : ""
+            }`}
           >
             About
           </Link>
         </ul>
-        <div className="flex flex-row gap-3">
-          <button>Login In</button>
-          <button>Sign Up</button>
+        <div className="flex  gap-4">
+          {isLoggedIn ? (
+            <button
+              className="px-4 py-2 bg-red-600 text-white rounded-md"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link href="/login">
+                <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md">
+                  Login
+                </button>
+              </Link>
+
+              <Link href="/register">
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-md">
+                  Sign Up
+                </button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>

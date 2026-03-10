@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Props } from "@/types";
 import { useRazorpay } from "@/component/useRazorpay";
-import { cashAppointment } from "./cashAppointment";
 import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
+import SubHeroSection from "@/component/subHeroSection";
 
 export default function BookingComponent({
   doctorId,
@@ -17,90 +17,104 @@ export default function BookingComponent({
 }: Props) {
   const [gender, setGender] = useState<Gender>("MALE");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
+
   const { initiatePayment } = useRazorpay();
-  const date = "2026-19-10";
+
   const handleBooking = (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (paymentMethod === "cash") {
-      // e.preventDefault();
-      alert("Booked! Using CASH!");
-    } else {
-      e.preventDefault();
-      initiatePayment({
-        doctorId: doctorId,
-        slotTime: slot!,
-        date: "2025-04-01",
-        patientId: userId!,
-        gender,
-        paymentMethod,
-        onSuccess: () => alert("Payment Successfull."),
-        onFailure: () => alert("Payment Failed. Please try Again."),
-      });
+      alert("Appointment booked with Cash payment.");
+      return;
     }
+
+    initiatePayment({
+      doctorId,
+      slotTime: slot!,
+      date: "2025-04-01",
+      patientId: userId!,
+      gender,
+      paymentMethod,
+      onSuccess: () => alert("Payment Successful"),
+      onFailure: () => alert("Payment Failed"),
+    });
   };
 
   return (
-    <form className="flex flex-col gap-4 p-6">
-      <h1 className="text-xl font-bold">Booking Page</h1>
+    <>
+      <SubHeroSection
+        title="CHECK YOUR DETAILS AND PAY"
+        subheading="Check your Details  and confirm your Appointment."
+      />
+      <div className="pt-15 pb-3  flex justify-center flex-wrap items-center ">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl w-full">
+          <div className="bg-white rounded-xl shadow-md p-6 flex flex-col gap-4">
+            <h2 className="text-2xl font-bold text-blue-700">
+              Dr. {doctorName}
+            </h2>
 
-      <p>Doctor ID: {doctorId}</p>
-      <p>Doctor Name: {doctorName}</p>
-      <p>Doctor Speciality: {speciality}</p>
-      <p>Slot: {slot}</p>
+            <p className="text-gray-500">{speciality}</p>
 
-      <input type="hidden" name="doctorId" value={doctorId} />
-      <input type="hidden" name="slot" value={slot} />
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-sm text-gray-500">Appointment Slot</p>
+              <p className="text-lg font-semibold">{slot}</p>
+            </div>
 
-      <div className="flex gap-3">
-        <label>Name</label>
-        <input
-          name="name"
-          type="text"
-          defaultValue={username}
-          className="bg-white text-black px-2"
-        />
+            <div className="flex justify-between border-t pt-4">
+              <span className="text-gray-600">Consultation Fee</span>
+              <span className="text-xl font-semibold">₹{fees}</span>
+            </div>
+          </div>
+
+          {/* Booking Form */}
+          <form
+            onSubmit={handleBooking}
+            className="bg-white rounded-xl shadow-md p-6 flex flex-col gap-5"
+          >
+            <h2 className="text-xl font-bold text-gray-800">Patient Details</h2>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-600">Name</label>
+              <input
+                defaultValue={username}
+                className="border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-600">Gender</label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value as Gender)}
+                className="border rounded-md px-3 py-2"
+              >
+                <option value={Gender.MALE}>Male</option>
+                <option value={Gender.FEMALE}>Female</option>
+                <option value={Gender.OTHER}>Other</option>
+                <option value={Gender.preferNotToSay}>Prefer Not to Say</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-600">Payment Method</label>
+              <select
+                value={paymentMethod}
+                onChange={(e) =>
+                  setPaymentMethod(e.target.value as PaymentMethod)
+                }
+                className="border rounded-md px-3 py-2"
+              >
+                <option value="online">Online</option>
+                <option value="cash">Cash</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button className="bg-blue-700 text-white py-3 rounded-md font-semibold hover:bg-blue-800 transition cursor-pointer">
+              Confirm Booking
+            </button>
+          </form>
+        </div>
       </div>
-
-      <div className="flex gap-3">
-        <label>Gender</label>
-        <select
-          name="gender"
-          value={gender}
-          onChange={(e) => setGender(e.target.value as Gender)}
-          className="bg-white text-black"
-        >
-          <option value="">Select your Gender</option>
-          <option value={Gender.MALE}>Male</option>
-          <option value={Gender.FEMALE}>Female</option>
-          <option value={Gender.OTHER}>Other</option>
-          <option value={Gender.preferNotToSay}>Prefer Not to Say</option>
-        </select>
-      </div>
-
-      <div className="flex gap-3">
-        <label>Payment</label>
-        <select
-          name="payment"
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-          className="bg-white text-black"
-        >
-          <option value="">Select Payment Method</option>
-          <option value={PaymentMethod.online}>Online</option>
-          <option value={PaymentMethod.cash}>Cash</option>
-          <option value={PaymentMethod.other}>Other</option>
-        </select>
-      </div>
-
-      <p className="font-semibold">Fees: ₹{fees}</p>
-      <div>
-        <button
-          type="submit"
-          onClick={handleBooking}
-          className="bg-blue-800 text-white px-4 py-2 rounded  hover:bg-blue-500"
-        >
-          Book Appointment
-        </button>
-      </div>
-    </form>
+    </>
   );
 }

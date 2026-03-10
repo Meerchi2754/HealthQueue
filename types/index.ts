@@ -29,3 +29,20 @@ export type Props = {
   username?: string;
   userId?: number;
 };
+
+export type Appointment = {
+  doctorId: number;
+  patientId: number;
+  patientName: string;
+  doctorName: string;
+  slotTime: string;
+  paymentMethod: string;
+  date: string;
+  status: string;
+  paymentStatus: string;
+};
+
+export type SubHeroProps = {
+  title: string;
+  subheading: string;
+};

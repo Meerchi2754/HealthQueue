@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import getDoctorName from "@/services/getDoctorName";
 import { createAppointment } from "@/services/createAppointment";
 import { createPayment } from "@/services/createPayment";
-import { Gender } from "@/app/generated/prisma/enums";
+import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -19,12 +19,14 @@ export async function POST(req: NextRequest) {
       date,
       patientId,
       gender,
+      paymentMethod,
     }: {
       doctorId: number;
       slotTime: string;
       date: string;
       patientId: number;
       gender: Gender;
+      paymentMethod: PaymentMethod;
     } = await req.json();
 
     const doctor = await getDoctorName(doctorId);
@@ -49,13 +51,13 @@ export async function POST(req: NextRequest) {
     //     amount: amountInPaise,
     //   },
     // };
-    const paymentMethod = "Online";
     const appointment = await createAppointment(
       patientId,
       doctorId,
       slotTime,
       date,
       gender,
+      paymentMethod,
     );
 
     //Intialise PAYMENT Model

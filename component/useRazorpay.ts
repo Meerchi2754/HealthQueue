@@ -56,7 +56,14 @@ export const useRazorpay = (): {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ doctorId, slotTime, date, patientId, gender,paymentMethod }),
+      body: JSON.stringify({
+        doctorId,
+        slotTime,
+        date,
+        patientId,
+        gender,
+        paymentMethod,
+      }),
     });
 
     const { orderId, amount, currency, appointmentId } = await res.json();
