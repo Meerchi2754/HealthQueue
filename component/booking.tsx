@@ -15,23 +15,29 @@ export default function BookingComponent({
   username,
   userId,
 }: Props) {
-  const [gender, setGender] = useState<Gender>("MALE");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
-
+  const [gender, setGender] = useState<Gender>(Gender.MALE);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
+    PaymentMethod.online,
+  );
+  const [date, setDate] = useState<string>(() =>
+    new Date().toISOString().slice(0, 10),
+  );
   const { initiatePayment } = useRazorpay();
 
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (paymentMethod === "cash") {
-      alert("Appointment booked with Cash payment.");
+    if (paymentMethod === PaymentMethod.cash) {
+      +alert(
+        "Cash booking is not available yet. Please choose Online payment.",
+      );
       return;
     }
 
     initiatePayment({
       doctorId,
       slotTime: slot!,
-      date: "2025-04-01",
+      date,
       patientId: userId!,
       gender,
       paymentMethod,

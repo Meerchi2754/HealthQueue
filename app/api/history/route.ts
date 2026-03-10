@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const user = await verifyCookie();
     if (user.role !== "PATIENT") {
-      redirect("/login");
+      return NextResponse.redirect(new URL("/login", req.url));
     }
     const history = await historyAppointment(user.id);
     return NextResponse.json({ data: history }, { status: 200 });

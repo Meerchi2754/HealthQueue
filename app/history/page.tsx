@@ -45,7 +45,7 @@ export default function History() {
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-slate-50 px-6 py-10">
+      <main className="min-h-screen px-6 py-10">
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}

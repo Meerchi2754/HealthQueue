@@ -1,4 +1,5 @@
 import { Appointment } from "@/services/clinic/Appointment";
+import { verifyCookie } from "@/utils/verifyCookie";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
