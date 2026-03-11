@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 
-export default async function GET() {
+export  async function GET() {
   const res = await prisma.appointment.findMany({
     where: {
       paymentStatus: "PAID",

@@ -8,15 +8,22 @@ export async function createPayment(
   amount: number,
   currency: string,
 ) {
-  const responseCP = await prisma.payment.create({
-    data: {
-      appointmentId,
-      razorpayOrderId: razorpayOrderId,
-      razorpaySignature: razorpaySignature,
-      razorpayPaymentId: razorpayPaymentId,
-      amount: amount!,
-      currency: currency!,
-    },
-  });
-  return responseCP;
+  const [payment] = await prisma.$transaction([
+    prisma.payment.create({
+      data: {
+        appointmentId,
+        razorpayOrderId,
+        razorpaySignature,
+        razorpayPaymentId,
+        amount,
+        currency,
+      },
+    }),
+    prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { paymentStatus: "PAID" },
+    }),
+  ]);
+
+  return payment;
 }

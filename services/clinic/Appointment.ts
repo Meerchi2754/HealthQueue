@@ -13,6 +13,9 @@ export async function Appointment() {
       usersId: true,
       patientId: true,
     },
+    orderBy: {
+      date: "asc",
+    },
   });
   return response;
 }

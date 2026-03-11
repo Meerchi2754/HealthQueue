@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export default function HomePage() {
   const router = useRouter();
+  const today = new Date().toISOString().split("T")[0];
   const [loading, setLoading] = useState(true);
   const [appointment, setAppointment] = useState<ClinicAppointment[]>([]);
   useEffect(() => {

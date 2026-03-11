@@ -28,7 +28,9 @@ export default function Revenue() {
             <div className="animate-spin h-10 w-10 rounded-full border-4 border-slate-200 border-t-blue-600"></div>
           </div>
         )}
-        {!loading && <p className="text-2xl font-bold text-green-700">{revenue}</p>}
+        {!loading && (
+          <p className="text-2xl font-bold text-green-700">{revenue}</p>
+        )}
       </div>
     </>
   );
