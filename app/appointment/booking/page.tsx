@@ -11,7 +11,7 @@ export default async function Booking({
 }) {
   const user = await verifyCookie();
   const username = await getDoctorName(Number(user.id));
-  const { doctorId, slot } = await searchParams;
+  const { doctorId, slot, date } = await searchParams;
   const doctorName = await getDoctorName(Number(doctorId));
 
   return (
@@ -21,6 +21,7 @@ export default async function Booking({
       <BookingComponent
         doctorId={Number(doctorId)}
         slot={slot!}
+        appDate={date!}
         doctorName={doctorName.name!}
         speciality={doctorName.speciality!}
         fees={doctorName.fees!}

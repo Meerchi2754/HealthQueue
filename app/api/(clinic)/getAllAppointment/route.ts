@@ -1,3 +1,4 @@
+import { Role } from "@/app/generated/prisma/enums";
 import { Appointment } from "@/services/clinic/Appointment";
 import { verifyCookie } from "@/utils/verifyCookie";
 import { NextRequest, NextResponse } from "next/server";

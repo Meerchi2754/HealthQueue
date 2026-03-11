@@ -1,0 +1,15 @@
+import { ClinicNavbar } from "@/component/clinic/Clinicnavbar";
+export default function ClinicLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col">
+      <div className="bg-white border-r h-screen">
+        <ClinicNavbar />
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+}

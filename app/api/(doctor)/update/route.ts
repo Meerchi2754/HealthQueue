@@ -11,53 +11,24 @@ export async function PATCH(req: NextRequest) {
     if (!token) {
       return NextResponse.json({ message: "Please Login" }, { status: 400 });
     }
-    // const tokenValue = token?.value;
+
     const reqUser = verifyToken(token);
 
-    if (reqUser.role !== "DOCTOR") {
+    if (reqUser.role !== "CLINIC") {
       return NextResponse.json(
         { message: "Unauthorized Access" },
         { status: 401 },
       );
     }
 
-    const { speciality, fees, degree, isAvailable, startTime, endTime } = body;
+    const { doctorId, isAvailable, startTime, endTime } = body;
 
-    if (!speciality)
-      return NextResponse.json(
-        { message: "Speciality required" },
-        { status: 400 },
-      );
-    if (fees === undefined)
-      return NextResponse.json(
-        { message: "Dr. Fees required" },
-        { status: 400 },
-      );
-    if (!degree)
-      return NextResponse.json(
-        { message: "Dr. Degree required" },
-        { status: 400 },
-      );
-    if (isAvailable === undefined)
-      return NextResponse.json(
-        { message: "Please provide Doctor Availability" },
-        { status: 400 },
-      );
-    if (!startTime || !endTime)
-      return NextResponse.json(
-        { message: "TimeSlot  required" },
-        { status: 400 },
-      );
-    console.log(reqUser);
     const timeSlot = `${startTime}:00-${endTime}:00`;
     const updatedDoctor = await prisma.doctorDetails.update({
       where: {
-        doctorId: Number(reqUser.id),
+        doctorId: doctorId,
       },
       data: {
-        speciality,
-        fees,
-        degree,
         isAvailable,
         startTime,
         endTime,

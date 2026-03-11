@@ -35,27 +35,22 @@ model DoctorDetails {
 }
 
 model Appointment {
-  id Int @id @default(autoincrement())
-
-  patientId Int
-  doctorId  Int
-
+  id            Int               @id @default(autoincrement())
+  patientId     Int
+  doctorId      Int
   patientName   String
   gender        Gender
   paymentMethod PaymentMethod
-
-  slotTime String
-  date     String
-
-  status AppointmentStatus @default(PENDING)
-
-  patient Users @relation("PatientAppointments", fields: [patientId], references: [id])
-  doctor  Users @relation("DoctorAppointments", fields: [doctorId], references: [id])
-  createdAt     DateTime      @default(now())
-  users         Users?        @relation(fields: [usersId], references: [id])
+  slotTime      String
+  date          String
+  status        AppointmentStatus @default(PENDING)
+  patient       Users             @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctor        Users             @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  createdAt     DateTime          @default(now())
+  users         Users?            @relation(fields: [usersId], references: [id])
   usersId       Int?
   payment       Payment?
-  paymentStatus PaymentStatus @default(CREATED)
+  paymentStatus PaymentStatus     @default(CREATED)
 }
 
 model Payment {

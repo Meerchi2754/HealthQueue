@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -25,8 +27,10 @@ export function Navbar() {
         method: "POST",
       });
       setIsLoggedIn(false);
+      toast.success("Logout Successfull!");
       router.push("/dashboard/user"); // redirect
     } catch (error) {
+      toast.error("Login Failed!");
       console.log("Logout failed");
     }
   };
@@ -75,7 +79,7 @@ export function Navbar() {
         <div className="flex  gap-4">
           {isLoggedIn ? (
             <button
-              className="px-4 py-2 bg-red-600 text-white rounded-md"
+              className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer"
               onClick={handleLogout}
             >
               Logout
@@ -83,13 +87,13 @@ export function Navbar() {
           ) : (
             <>
               <Link href="/login">
-                <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md">
+                <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md cursor-pointer">
                   Login
                 </button>
               </Link>
 
               <Link href="/register">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md">
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer">
                   Sign Up
                 </button>
               </Link>

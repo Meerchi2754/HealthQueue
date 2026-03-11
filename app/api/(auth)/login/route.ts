@@ -1,8 +1,7 @@
 import { createToken } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
-
+import { toast } from "sonner";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -12,10 +11,7 @@ export async function POST(req: NextRequest) {
     const { email, password } = body;
 
     if (!email || !password) {
-      return NextResponse.json(
-        { message: "Email and Password required" },
-        { status: 400 },
-      );
+      toast.error("Email and Password required");
     }
 
     const response = await prisma.users.findUnique({

@@ -4,6 +4,13 @@ export async function historyAppointment(userId: number) {
     where: {
       patientId: userId,
     },
+    include: {
+      doctor: {
+        select: {
+          name: true,
+        },
+      },
+    },
     omit: {
       id: true,
       gender: true,

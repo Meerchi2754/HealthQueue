@@ -22,7 +22,6 @@ export const useRazorpay = (): {
 
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
-
       document.body.appendChild(script);
     });
 
@@ -84,7 +83,14 @@ export const useRazorpay = (): {
             razorpayOrderId: response.razorpay_order_id,
             razorpayPaymentId: response.razorpay_payment_id,
             razorpaySignature: response.razorpay_signature,
-            appointmentId,
+            doctorId,
+            slotTime,
+            date,
+            patientId,
+            gender,
+            paymentMethod,
+            amount,
+            currency,
           }),
         });
 
@@ -92,7 +98,11 @@ export const useRazorpay = (): {
 
         result.success ? onSuccess() : onFailure();
       },
-
+      modal: {
+        ondismiss: function () {
+          onFailure(); // 🔥 triggered when user closes Razorpay popup
+        },
+      },
       theme: { color: "#6366f1" },
     };
 

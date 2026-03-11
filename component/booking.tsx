@@ -5,10 +5,13 @@ import { Props } from "@/types";
 import { useRazorpay } from "@/component/useRazorpay";
 import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
 import SubHeroSection from "@/component/subHeroSection";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function BookingComponent({
   doctorId,
   slot,
+  appDate,
   doctorName,
   speciality,
   fees,
@@ -19,18 +22,20 @@ export default function BookingComponent({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
     PaymentMethod.online,
   );
-  const [date, setDate] = useState<string>(() =>
-    new Date().toISOString().slice(0, 10),
-  );
+  const [date, setDate] = useState<string>(appDate);
+  const [loading, setLoading] = useState(false);
   const { initiatePayment } = useRazorpay();
+  const router = useRouter();
 
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
-
+    setLoading(true);
     if (paymentMethod === PaymentMethod.cash) {
-      +alert(
+      //alert("Cash booking is not available yet. Please choose Online payment.");
+      toast.error(
         "Cash booking is not available yet. Please choose Online payment.",
       );
+      setLoading(false);
       return;
     }
 
@@ -41,8 +46,16 @@ export default function BookingComponent({
       patientId: userId!,
       gender,
       paymentMethod,
-      onSuccess: () => alert("Payment Successful"),
-      onFailure: () => alert("Payment Failed"),
+      onSuccess: () => {
+        setLoading(false);
+        toast.success("Payment Successfull.");
+        router.push("/history");
+      },
+      onFailure: () => {
+        setLoading(false);
+        toast.error("Payment Failed.Appointmented is created.");
+        router.push("/dashboard/user");
+      },
     });
   };
 
@@ -63,6 +76,7 @@ export default function BookingComponent({
 
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Appointment Slot</p>
+              <p className="text-lg font-semibold">{date}</p>
               <p className="text-lg font-semibold">{slot}</p>
             </div>
 
@@ -115,8 +129,19 @@ export default function BookingComponent({
                 <option value="other">Other</option>
               </select>
             </div>
-            <button className="bg-blue-700 text-white py-3 rounded-md font-semibold hover:bg-blue-800 transition cursor-pointer">
-              Confirm Booking
+            <button
+              disabled={loading}
+              className="bg-blue-700 text-white py-3 rounded-md font-semibold transition cursor-pointer
+          disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Processing Payment...
+                </span>
+              ) : (
+                "Confirm Payment"
+              )}
             </button>
           </form>
         </div>

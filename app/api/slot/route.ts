@@ -12,6 +12,11 @@ export async function GET(req: NextRequest) {
       timeSlot: true,
       startTime: true,
       endTime: true,
+      user: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
   return NextResponse.json({ data: timeSlot }, { status: 200 });

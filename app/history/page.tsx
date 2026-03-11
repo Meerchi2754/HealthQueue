@@ -1,13 +1,26 @@
 "use client";
 import { Navbar } from "@/component/navbar";
 import { Appointment } from "@/types";
+import { verifyCookie } from "@/utils/verifyCookie";
 import { useEffect, useState } from "react";
-
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 export default function History() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   useEffect(() => {
+    const checkingAccess = async () => {
+      const user = await verifyCookie();
+      if (!user.role || user.role !== "PATIENT") {
+        toast.error("Unauthorized");
+        router.push("/login");
+        await fetch("/api/logout", {
+          method: "POST",
+        });
+        return;
+      }
+    };
     const getHistory = async () => {
       try {
         const response = await fetch("/api/history");
@@ -19,25 +32,26 @@ export default function History() {
         setLoading(false);
       }
     };
-
+    checkingAccess();
     getHistory();
   }, []);
 
-  const statusStyle = (status: string) => {
-    if (status === "APPROVED")
-      return "bg-green-100 text-green-700";
-    if (status === "PENDING")
-      return "bg-yellow-100 text-yellow-700";
-    if (status === "REJECTED")
-      return "bg-red-100 text-red-700";
-    return "bg-gray-100 text-gray-600";
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "CONFIRMED":
+        return "bg-green-100 text-green-700";
+      case "PENDING":
+        return "bg-yellow-100 text-yellow-700";
+      case "REJECTED":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100";
+    }
   };
 
   const paymentStyle = (status: string) => {
-    if (status === "PAID")
-      return "bg-green-100 text-green-700";
-    if (status === "UNPAID")
-      return "bg-red-100 text-red-700";
+    if (status === "PAID") return "bg-green-100 text-green-700";
+    if (status === "UNPAID") return "bg-red-100 text-red-700";
     return "bg-gray-100 text-gray-600";
   };
 
@@ -47,7 +61,6 @@ export default function History() {
 
       <main className="min-h-screen px-6 py-10">
         <div className="max-w-6xl mx-auto">
-
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-800">
@@ -76,7 +89,6 @@ export default function History() {
           {!loading && appointments.length > 0 && (
             <div className="bg-white shadow-md rounded-xl overflow-hidden">
               <table className="w-full text-sm">
-
                 <thead className="bg-slate-100 text-slate-600 uppercase text-xs">
                   <tr>
                     <th className="px-6 py-3">#</th>
@@ -90,17 +102,13 @@ export default function History() {
                 </thead>
 
                 <tbody className="divide-y">
-
                   {appointments.map((ap, index) => (
                     <tr key={index} className="hover:bg-slate-50 transition">
-
                       <td className="px-6 py-4 font-medium">{index + 1}</td>
 
                       <td className="px-6 py-4">{ap.patientName}</td>
 
-                      <td className="px-6 py-4">
-                        Dr. {ap.doctorId}
-                      </td>
+                      <td className="px-6 py-4">Dr. {ap.doctor!.name}</td>
 
                       <td className="px-6 py-4">{ap.slotTime}</td>
 
@@ -108,8 +116,8 @@ export default function History() {
 
                       <td className="px-6 py-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyle(
-                            ap.status
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                            ap.status,
                           )}`}
                         >
                           {ap.status}
@@ -119,21 +127,18 @@ export default function History() {
                       <td className="px-6 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${paymentStyle(
-                            ap.paymentStatus
+                            ap.paymentStatus,
                           )}`}
                         >
                           {ap.paymentStatus}
                         </span>
                       </td>
-
                     </tr>
                   ))}
-
                 </tbody>
               </table>
             </div>
           )}
-
         </div>
       </main>
     </>

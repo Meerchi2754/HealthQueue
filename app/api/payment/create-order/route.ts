@@ -2,8 +2,7 @@ import Razorpay from "razorpay";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import getDoctorName from "@/services/getDoctorName";
-import { createAppointment } from "@/services/createAppointment";
-import { createPayment } from "@/services/createPayment";
+
 import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
 
 const razorpay = new Razorpay({
@@ -15,18 +14,8 @@ export async function POST(req: NextRequest) {
   try {
     const {
       doctorId,
-      slotTime,
-      date,
-      patientId,
-      gender,
-      paymentMethod,
     }: {
       doctorId: number;
-      slotTime: string;
-      date: string;
-      patientId: number;
-      gender: Gender;
-      paymentMethod: PaymentMethod;
     } = await req.json();
 
     const doctor = await getDoctorName(doctorId);
@@ -51,33 +40,33 @@ export async function POST(req: NextRequest) {
     //     amount: amountInPaise,
     //   },
     // };
-    const appointment = await createAppointment(
-      patientId,
-      doctorId,
-      slotTime,
-      date,
-      gender,
-      paymentMethod,
-    );
+    // const appointment = await createAppointment(
+    //   patientId,
+    //   doctorId,
+    //   slotTime,
+    //   date,
+    //   gender,
+    //   paymentMethod,
+    // );
 
-    //Intialise PAYMENT Model
-    const payment = await createPayment(
-      appointment.id,
-      order.id,
-      amountInPaise,
-      order.currency,
-    );
-    if (!payment) {
-      return NextResponse.json(
-        { error: "Payment Table not Initailised" },
-        { status: 400 },
-      );
-    }
+    // //Intialise PAYMENT Model
+    // const payment = await createPayment(
+    //   appointment.id,
+    //   order.id,
+    //   amountInPaise,
+    //   order.currency,
+    // );
+    // if (!payment) {
+    //   return NextResponse.json(
+    //     { error: "Payment Table not Initailised" },
+    //     { status: 400 },
+    //   );
+    // }
     return NextResponse.json({
       orderId: order.id,
       amount: amountInPaise,
       currency: "INR",
-      appointmentId: appointment.id,
+      //appointmentId: appointment.id,
     });
   } catch (error) {
     console.error("RAZORPAY ORDER ERROR:", error);

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -19,8 +20,7 @@ export default function RegisterPage() {
       body: JSON.stringify({ email, name, password }),
     });
 
-    const data = await res.json();
-    console.log(data);
+    toast.success("Register Successfull");
     router.push("/login");
   };
 

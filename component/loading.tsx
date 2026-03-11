@@ -1,7 +1,7 @@
 export default function LoadingSpinner() {
   return (
-    <div className="flex justify-center items-center">
-      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="flex justify-center py-20">
+      <div className="animate-spin h-10 w-10 rounded-full border-4 border-slate-200 border-t-blue-600"></div>
     </div>
   );
 }
