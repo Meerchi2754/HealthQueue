@@ -31,26 +31,58 @@ export default function BookingComponent({
   const { initiatePayment } = useRazorpay();
   const router = useRouter();
 
-  const handleBooking = (e: React.FormEvent) => {
+  const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(false);
     setLoading(true);
-    if (paymentMethod === PaymentMethod.cash) {
-      toast.error(
-        "Cash booking is not available yet. Please choose Online payment.",
-      );
-      setLoading(false);
-      return;
-    }
 
+    // Validate patient name
     if (patientName.length < 4 || patientName.length > 12) {
       setError(true);
       setLoading(false);
-      const message = "Minimun  length must be 4\nMaximum length must be 8.";
+      const message = "Minimum length must be 4\nMaximum length must be 12.";
       setErrorMessage(message);
       return;
     }
 
+    // Handle Cash Payment
+    if (paymentMethod === PaymentMethod.cash) {
+      try {
+        const response = await fetch("/api/createCashAppointment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            patientName,
+            doctorId,
+            slotTime: slot,
+            date,
+            gender,
+            paymentMethod,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to create appointment");
+        }
+
+        setLoading(false);
+        toast.success(
+          "Appointment booked! Pay at clinic. Awaiting confirmation."
+        );
+        router.push("/history");
+      } catch (error: any) {
+        setLoading(false);
+        toast.error(error.message || "Failed to book appointment");
+        console.error("Cash appointment error:", error);
+      }
+      return;
+    }
+
+    // Handle Online Payment
     initiatePayment({
       doctorId,
       slotTime: slot!,
@@ -63,7 +95,7 @@ export default function BookingComponent({
       paymentMethod,
       onSuccess: () => {
         setLoading(false);
-        toast.success("Payment Successfull.");
+        toast.success("Payment Successful.");
         router.push("/history");
       },
       onFailure: () => {
@@ -159,8 +191,12 @@ export default function BookingComponent({
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Processing Payment...
+                  {paymentMethod === PaymentMethod.cash
+                    ? "Booking Appointment..."
+                    : "Processing Payment..."}
                 </span>
+              ) : paymentMethod === PaymentMethod.cash ? (
+                "Book Appointment (Pay at Clinic)"
               ) : (
                 "Confirm Payment"
               )}

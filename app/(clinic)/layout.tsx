@@ -1,4 +1,4 @@
-import { ClinicNavbar } from "@/component/clinic/ClinicNavbar";
+import ClinicNavbar from "@/component/clinic/ClinicNavbar";
 export default function ClinicLayout({
   children,
 }: {
