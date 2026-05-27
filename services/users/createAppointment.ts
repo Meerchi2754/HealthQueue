@@ -1,7 +1,6 @@
 import { Gender, PaymentMethod } from "@/prisma/generated/prisma/enums";
 
 import prisma from "@/lib/prisma";
-import getDoctorName from "./getDoctorName";
 
 export async function createAppointment(
   patientId: number,

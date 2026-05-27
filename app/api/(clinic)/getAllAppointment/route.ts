@@ -1,7 +1,7 @@
 import { Appointment } from "@/services/clinic/appointment";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const getAllAppointment = await Appointment();
     if (!getAllAppointment) {

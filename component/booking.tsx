@@ -7,7 +7,6 @@ import { Gender, PaymentMethod } from "@/prisma/generated/prisma/enums";
 import SubHeroSection from "@/component/subHeroSection";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Span } from "next/dist/trace";
 
 export default function BookingComponent({
   doctorId,
@@ -24,7 +23,6 @@ export default function BookingComponent({
     PaymentMethod.online,
   );
   const [patientName, setPatientName] = useState<string>("");
-  const [date, setDate] = useState<string>(appDate);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -57,7 +55,7 @@ export default function BookingComponent({
             patientName,
             doctorId,
             slotTime: slot,
-            date,
+            date: appDate,
             gender,
             paymentMethod,
           }),
@@ -74,9 +72,10 @@ export default function BookingComponent({
           "Appointment booked! Pay at clinic. Awaiting confirmation."
         );
         router.push("/history");
-      } catch (error: any) {
+      } catch (error) {
         setLoading(false);
-        toast.error(error.message || "Failed to book appointment");
+        const errorMessage = error instanceof Error ? error.message : "Failed to book appointment";
+        toast.error(errorMessage);
         console.error("Cash appointment error:", error);
       }
       return;
@@ -86,7 +85,7 @@ export default function BookingComponent({
     initiatePayment({
       doctorId,
       slotTime: slot!,
-      date,
+      date: appDate,
       patientId: userId!,
       patientName,
       gender,
@@ -123,7 +122,7 @@ export default function BookingComponent({
 
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Appointment Slot</p>
-              <p className="text-lg font-semibold">{date}</p>
+              <p className="text-lg font-semibold">{appDate}</p>
               <p className="text-lg font-semibold">{slot}</p>
             </div>
 
@@ -145,7 +144,7 @@ export default function BookingComponent({
               <input
                 type="text"
                 onChange={(e) => setPatientName(e.target.value)}
-                defaultValue={username}
+                defaultValue={username || ""}
                 className="border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
               {error ? (
