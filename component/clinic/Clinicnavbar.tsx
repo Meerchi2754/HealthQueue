@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export function ClinicNavbar() {
+export default function ClinicNavbar() {
   const router = useRouter();
   const pathname = usePathname();
 

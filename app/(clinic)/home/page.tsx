@@ -57,6 +57,34 @@ export default function HomePage() {
     }
   };
 
+  const markCashAsPaid = async (id: number) => {
+    try {
+      const res = await fetch("/api/markCashPaid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          appointmentId: id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed to mark as paid");
+
+      // ✅ Update UI instantly
+      setAppointment((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, paymentStatus: "PAID" } : a)),
+      );
+      toast.success("Cash payment confirmed");
+      router.refresh();
+    } catch (error: any) {
+      console.log("Failed to mark as paid:", error);
+      toast.error(error.message || "Failed to confirm payment");
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "CONFIRMED":
@@ -64,6 +92,19 @@ export default function HomePage() {
       case "PENDING":
         return "bg-yellow-100 text-yellow-700";
       case "REJECTED":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100";
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case "PAID":
+        return "bg-green-100 text-green-700";
+      case "CREATED":
+        return "bg-yellow-100 text-yellow-700";
+      case "FAILED":
         return "bg-red-100 text-red-700";
       default:
         return "bg-gray-100";
@@ -105,7 +146,9 @@ export default function HomePage() {
               <th className="px-6 py-3">Slot Time</th>
               <th className="px-6 py-3">Date</th>
               <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Payment</th>
+              <th className="px-6 py-3">Payment Method</th>
+              <th className="px-6 py-3">Payment Status</th>
+              <th className="px-6 py-3">Action</th>
             </tr>
           </thead>
 
@@ -139,10 +182,35 @@ export default function HomePage() {
                     </option>
                   </select>
                 </td>
+
                 <td className="px-6 py-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-medium">
+                  <span className="px-3 py-1 rounded-full text-xs font-medium uppercase">
+                    {ap.paymentMethod}
+                  </span>
+                </td>
+
+                <td className="px-6 py-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(
+                      ap.paymentStatus,
+                    )}`}
+                  >
                     {ap.paymentStatus}
                   </span>
+                </td>
+
+                <td className="px-6 py-4">
+                  {ap.paymentMethod === "cash" &&
+                  ap.paymentStatus !== "PAID" ? (
+                    <button
+                      onClick={() => markCashAsPaid(ap.id)}
+                      className="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 transition"
+                    >
+                      Mark Paid
+                    </button>
+                  ) : (
+                    <span className="text-gray-400 text-xs">-</span>
+                  )}
                 </td>
               </tr>
             ))}
