@@ -30,7 +30,7 @@ export type Props = {
   doctorName: string;
   speciality: string;
   fees: number;
-  username?: string;
+  username?: string | null;
   userId?: number;
 };
 

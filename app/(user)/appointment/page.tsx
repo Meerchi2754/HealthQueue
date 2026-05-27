@@ -75,7 +75,7 @@ export default function AppointmentPage() {
   };
 
   //handleOnClick
-  const handleClick = async (doctorId: Number, slot: string) => {
+  const handleClick = async (doctorId: number, slot: string) => {
     const user = await verifyCookie();
     if (!user.role || user.role !== "PATIENT") {
       toast.error("Unauthorized");

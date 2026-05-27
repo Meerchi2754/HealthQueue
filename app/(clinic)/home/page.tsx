@@ -46,7 +46,7 @@ export default function HomePage() {
 
       // ✅ Update UI instantly
       setAppointment((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status: status as any } : a)),
+        prev.map((a) => (a.id === id ? { ...a, status: status as AppointmentStatus } : a)),
       );
       toast.success("Appointment Status Updated");
       router.refresh();
@@ -79,9 +79,10 @@ export default function HomePage() {
       );
       toast.success("Cash payment confirmed");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.log("Failed to mark as paid:", error);
-      toast.error(error.message || "Failed to confirm payment");
+      const errorMessage = error instanceof Error ? error.message : "Failed to confirm payment";
+      toast.error(errorMessage);
     }
   };
 

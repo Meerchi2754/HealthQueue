@@ -4,11 +4,15 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function NotFound() {
-  const [year, setYear] = useState<number | null>(null);
+  const [year, setYear] = useState<number>(2026);
 
   useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+    // Set year on mount to avoid hydration mismatch
+    const currentYear = new Date().getFullYear();
+    if (currentYear !== year) {
+      setYear(currentYear);
+    }
+  }, [year]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-6">
@@ -44,7 +48,7 @@ export default function NotFound() {
 
       {/* Footer */}
       <p className="absolute bottom-6 text-sm text-gray-500">
-        © {year || "2026"} HealthQueue. All rights reserved.
+        © {year} HealthQueue. All rights reserved.
       </p>
     </div>
   );

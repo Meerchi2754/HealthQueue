@@ -20,8 +20,8 @@ export default async function getDoctorName(id: number) {
   });
 
   return {
-    name: name?.name!,
-    fees: doctorDetails?.fees!,
-    speciality: doctorDetails?.speciality!,
+    name: name?.name ?? null,
+    fees: doctorDetails?.fees ?? null,
+    speciality: doctorDetails?.speciality ?? null,
   };
 }
