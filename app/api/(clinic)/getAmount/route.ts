@@ -1,5 +1,5 @@
 import revenueConfirm from "@/services/clinic/revenueConfirm";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {

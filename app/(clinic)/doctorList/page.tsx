@@ -35,9 +35,7 @@ export default function DoctorList() {
     doctor: Doctor,
   ) => {
     e.preventDefault();
-
     setUpdatingId(doctorId);
-
     try {
       const res = await fetch("/api/update", {
         method: "PATCH",
@@ -74,7 +72,6 @@ export default function DoctorList() {
       </div>
 
       {loading && <Loading />}
-
       {!loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {doctors.map((d, index) => (
@@ -83,8 +80,8 @@ export default function DoctorList() {
               className="bg-white rounded-xl shadow-md border p-6 hover:shadow-lg transition"
             >
               <div className="flex items-center gap-4 mb-3 ">
-                <div className="w-14 h-15 flex rounded-full">
-                  <p className="bg-blue-900  text-blue-700 font-bold  text-lg">
+                <div className="w-14 h-15 flex rounded-full bg-gray-300 ">
+                  <p className="pl-5 pt-3 text-blue-700 font-bold text-2xl">
                     {d.name?.charAt(0)}
                   </p>
                 </div>
@@ -162,7 +159,7 @@ export default function DoctorList() {
                 {/* UPDATE BUTTON */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition disabled:bg-gray-500"
                   disabled={updatingId === d.doctorDetails.doctorId}
                 >
                   {updatingId === d.doctorDetails.doctorId ? (

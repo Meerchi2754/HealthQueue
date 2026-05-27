@@ -1,14 +1,17 @@
 "use client";
 
-import { Role } from "@/app/generated/prisma/enums";
+import { Role } from "@/prisma/generated/prisma/enums";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { loginInputSchema } from "@/validation/loginFormSchema";
 
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<loginInputSchema>();
+
   const loginLogic = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -31,7 +34,8 @@ export default function LoginPage() {
 
     if (!res.ok) {
       setLoading(false);
-      toast.error(data.message || "Error in Login");
+      setError(data.message);
+      toast.error(data.error || "Login Failed");
       return;
     }
     if (data.data.role === Role.CLINIC) {
@@ -40,7 +44,7 @@ export default function LoginPage() {
       return;
     }
     toast.success("Login In");
-    router.push("/dashboard/user");
+    router.push("/user");
   };
 
   return (
@@ -52,18 +56,22 @@ export default function LoginPage() {
 
       <input
         name="email"
-        type="email"
+        type="text"
         placeholder="Email"
         className="border p-2 rounded"
       />
+      {error && <p className="text-sm text-red-500">{error.email}</p>}
       <input
         name="password"
         type="password"
         placeholder="Password"
         className="border p-2 rounded"
       />
-
-      <button className="bg-blue-700 text-white p-2 rounded cursor-pointer">
+      {error && <span className="text-sm text-red-500">{error.password}</span>}
+      <button
+        disabled={loading}
+        className="bg-blue-700 text-white p-2 rounded cursor-pointer disabled:bg-gray-500"
+      >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
             <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>

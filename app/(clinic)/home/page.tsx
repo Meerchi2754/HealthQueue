@@ -3,16 +3,18 @@
 import { ClinicAppointment } from "@/types";
 import Revenue from "@/component/clinic/Revenue";
 import { useEffect, useState } from "react";
-import { AppointmentStatus } from "@/app/generated/prisma/enums";
+import { AppointmentStatus } from "@/prisma/generated/prisma/enums";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function HomePage() {
   const router = useRouter();
-  const today = new Date().toISOString().split("T")[0];
+  const [today, setToday] = useState("");
   const [loading, setLoading] = useState(true);
   const [appointment, setAppointment] = useState<ClinicAppointment[]>([]);
   useEffect(() => {
+    setToday(new Date().toISOString().split("T")[0]);
+    
     const getAllappointment = async () => {
       try {
         const response = await fetch("/api/getAllAppointment");
@@ -137,7 +139,6 @@ export default function HomePage() {
                     </option>
                   </select>
                 </td>
-
                 <td className="px-6 py-4">
                   <span className="px-3 py-1 rounded-full text-xs font-medium">
                     {ap.paymentStatus}

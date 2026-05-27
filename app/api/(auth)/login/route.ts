@@ -1,17 +1,20 @@
 import { createToken } from "@/lib/jwt";
 import prisma from "@/lib/prisma";
+import { loginSchema } from "@/validation/loginFormSchema";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    // const cookie = await cookies();
     const body = await req.json();
     const { email, password } = body;
 
-    if (!email || !password) {
+    const validationResult = loginSchema.safeParse({ email, password });
+    if (!validationResult.success) {
       return NextResponse.json(
-        { message: "Email and Password required" },
+        {
+          message: validationResult.error.flatten().fieldErrors,
+        },
         { status: 400 },
       );
     }
@@ -25,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (!response) {
       return NextResponse.json(
         {
-          message: "User Not Found",
+          error: "User Not Found",
         },
         {
           status: 401,

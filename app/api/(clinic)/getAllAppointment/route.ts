@@ -1,6 +1,4 @@
-import { Role } from "@/app/generated/prisma/enums";
-import { Appointment } from "@/services/clinic/Appointment";
-import { verifyCookie } from "@/utils/verifyCookie";
+import { Appointment } from "@/services/clinic/appointment";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

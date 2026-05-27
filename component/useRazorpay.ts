@@ -1,4 +1,4 @@
-import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
+import { Gender, PaymentMethod } from "@/prisma/generated/prisma/enums";
 
 export const useRazorpay = (): {
   initiatePayment: (args: {
@@ -6,7 +6,10 @@ export const useRazorpay = (): {
     slotTime: string;
     date: string;
     patientId: number;
+    patientName: string;
     gender: Gender;
+    fees: number;
+    currency: string;
     paymentMethod: PaymentMethod;
     onSuccess: () => void;
     onFailure: () => void;
@@ -30,7 +33,10 @@ export const useRazorpay = (): {
     slotTime,
     date,
     patientId,
+    patientName,
     gender,
+    fees,
+    currency,
     paymentMethod,
     onSuccess,
     onFailure,
@@ -39,6 +45,9 @@ export const useRazorpay = (): {
     slotTime: string;
     date: string;
     patientId: number;
+    patientName: string;
+    fees: number;
+    currency: string;
     gender: Gender;
     paymentMethod: PaymentMethod;
     onSuccess: () => void;
@@ -62,11 +71,14 @@ export const useRazorpay = (): {
         patientId,
         gender,
         paymentMethod,
+        patientName,
+        fees,
+        currency,
       }),
     });
 
-    const { orderId, amount, currency, appointmentId } = await res.json();
-
+    const { orderId } = await res.json();
+    const amount = fees;
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount,
@@ -87,6 +99,7 @@ export const useRazorpay = (): {
             slotTime,
             date,
             patientId,
+            patientName,
             gender,
             paymentMethod,
             amount,

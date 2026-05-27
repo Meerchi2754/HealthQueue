@@ -3,7 +3,7 @@ import {
   PaymentMethod,
   AppointmentStatus,
   PaymentStatus,
-} from "@/app/generated/prisma/enums";
+} from "@/prisma/generated/prisma/enums";
 export interface JwtPayload {
   id: number;
   email: string;

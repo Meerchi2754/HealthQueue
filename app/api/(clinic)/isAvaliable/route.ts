@@ -1,4 +1,4 @@
-import { changeAvailable } from "@/services/changeAvailable";
+import { changeAvailable } from "@/services/clinic/changeAvailable";
 import { verifyCookie } from "@/utils/verifyCookie";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json(
         { message: "Unauthorized Access" },
         { status: 401 },
-      );  
+      );
     }
 
     const body = await req.json();

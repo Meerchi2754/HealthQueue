@@ -28,7 +28,7 @@ export function Navbar() {
       });
       setIsLoggedIn(false);
       toast.success("Logout Successfull!");
-      router.push("/dashboard/user"); // redirect
+      router.push("/user"); // redirect
     } catch (error) {
       toast.error("Login Failed!");
       console.log("Logout failed");
@@ -44,9 +44,9 @@ export function Navbar() {
         </div>
         <ul className="flex flex-row gap-3 items-center font-bold ">
           <Link
-            href="/dashboard/user"
+            href="/user"
             className={`hover:text-blue-800 ${
-              isActive("/dashboard/user") ? "text-blue-600 font-bold" : ""
+              isActive("/user") ? "text-blue-600 font-bold" : ""
             }`}
           >
             Home

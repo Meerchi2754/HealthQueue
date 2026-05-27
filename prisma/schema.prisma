@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "../prisma/generated/prisma"
 }
 
 datasource db {
@@ -19,6 +19,7 @@ model Users {
   patientAppointments Appointment[] @relation("PatientAppointments")
   doctorAppointments  Appointment[] @relation("DoctorAppointments")
   appointments        Appointment[]
+  createdAt           DateTime      @default(now())
 }
 
 model DoctorDetails {

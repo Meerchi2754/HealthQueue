@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { registerSchema } from "@/validation/registerFormSchema";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
@@ -7,9 +8,17 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, name, password, role } = body;
 
-    if (!email || !password || !name) {
+
+    const validationResult = registerSchema.safeParse({
+      name,
+      email,
+      password,
+    });
+    if (!validationResult.success) {
       return NextResponse.json(
-        { message: "Email, Name and Password required" },
+        {
+          message: validationResult.error.flatten().fieldErrors,
+        },
         { status: 400 },
       );
     }
@@ -19,7 +28,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "User already exists" },
+        { error: "User already exists" },
         { status: 400 },
       );
     }
@@ -45,7 +54,7 @@ export async function POST(req: Request) {
       });
       if (!initaliseDoctorDetails) {
         return NextResponse.json(
-          { message: "Doctor Detail has not been created!" },
+          { error: "Doctor Detail has not been created!" },
           { status: 400 },
         );
       }

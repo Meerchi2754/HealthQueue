@@ -1,9 +1,7 @@
 import Razorpay from "razorpay";
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import getDoctorName from "@/services/getDoctorName";
-
-import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
+import getDoctorName from "@/services/users/getDoctorName";
+import { PaymentMethod, Gender } from "@/prisma/generated/prisma/enums";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -14,8 +12,24 @@ export async function POST(req: NextRequest) {
   try {
     const {
       doctorId,
+      slotTime,
+      date,
+      patientId,
+      patientName,
+      gender,
+      paymentMethod,
+      amount,
+      currency,
     }: {
       doctorId: number;
+      slotTime: string;
+      date: string;
+      patientId: number;
+      patientName: string;
+      gender: Gender;
+      paymentMethod: PaymentMethod;
+      amount: number;
+      currency: string;
     } = await req.json();
 
     const doctor = await getDoctorName(doctorId);
@@ -33,35 +47,19 @@ export async function POST(req: NextRequest) {
       amount: amountInPaise,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
+      notes: {
+        slotTime,
+        date,
+        patientId,
+        patientName,
+        doctorId,
+        gender,
+        paymentMethod,
+        amount,
+        currency,
+      },
     });
-    // const payment = {
-    //   create: {
-    //     razorpayOrderId: order.id,
-    //     amount: amountInPaise,
-    //   },
-    // };
-    // const appointment = await createAppointment(
-    //   patientId,
-    //   doctorId,
-    //   slotTime,
-    //   date,
-    //   gender,
-    //   paymentMethod,
-    // );
 
-    // //Intialise PAYMENT Model
-    // const payment = await createPayment(
-    //   appointment.id,
-    //   order.id,
-    //   amountInPaise,
-    //   order.currency,
-    // );
-    // if (!payment) {
-    //   return NextResponse.json(
-    //     { error: "Payment Table not Initailised" },
-    //     { status: 400 },
-    //   );
-    // }
     return NextResponse.json({
       orderId: order.id,
       amount: amountInPaise,

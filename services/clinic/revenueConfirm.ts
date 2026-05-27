@@ -1,4 +1,7 @@
-import { PaymentStatus, AppointmentStatus } from "@/app/generated/prisma/enums";
+import {
+  PaymentStatus,
+  AppointmentStatus,
+} from "@/prisma/generated/prisma/enums";
 import prisma from "@/lib/prisma";
 
 export default async function revenueConfirm() {

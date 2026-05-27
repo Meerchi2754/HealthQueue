@@ -1,13 +1,18 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
+import { registerFormSchema } from "@/validation/registerFormSchema";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<registerFormSchema>();
 
   const registerLogic = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email");
     const name = formData.get("name");
@@ -19,7 +24,13 @@ export default function RegisterPage() {
       },
       body: JSON.stringify({ email, name, password }),
     });
-
+    const data = await res.json();
+    if (!res.ok) {
+      setLoading(false);
+      setError(data.message);
+      toast.error(data.error || "Register Failed");
+      return;
+    }
     toast.success("Register Successfull");
     router.push("/login");
   };
@@ -36,34 +47,32 @@ export default function RegisterPage() {
           <label>Email</label>
           <input
             name="email"
-            type="email"
+            type="text"
             className="border px-3 py-2 rounded"
-            required
           />
         </div>
-
+        {error && <p className="text-red-500 text-sm">{error.email}</p>}
         <div className="flex flex-col">
           <label>Username</label>
           <input
             name="name"
             type="text"
             className="border px-3 py-2 rounded"
-            required
           />
         </div>
-
+        {error && <p className="text-red-500 text-sm">{error.name}</p>}
         <div className="flex flex-col">
           <label>Password</label>
           <input
             name="password"
             type="password"
             className="border px-3 py-2 rounded"
-            required
           />
         </div>
-
+        {error && <p className="text-red-500 text-sm">{error.password}</p>}
         <button
           type="submit"
+          disabled={loading}
           className="bg-blue-700 text-white py-2 rounded hover:bg-blue-800"
         >
           Sign Up

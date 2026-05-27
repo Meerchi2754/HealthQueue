@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Props } from "@/types";
 import { useRazorpay } from "@/component/useRazorpay";
-import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
+import { Gender, PaymentMethod } from "@/prisma/generated/prisma/enums";
 import SubHeroSection from "@/component/subHeroSection";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Span } from "next/dist/trace";
 
 export default function BookingComponent({
   doctorId,
@@ -22,20 +23,31 @@ export default function BookingComponent({
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
     PaymentMethod.online,
   );
+  const [patientName, setPatientName] = useState<string>("");
   const [date, setDate] = useState<string>(appDate);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
   const { initiatePayment } = useRazorpay();
   const router = useRouter();
 
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(false);
     setLoading(true);
     if (paymentMethod === PaymentMethod.cash) {
-      //alert("Cash booking is not available yet. Please choose Online payment.");
       toast.error(
         "Cash booking is not available yet. Please choose Online payment.",
       );
       setLoading(false);
+      return;
+    }
+
+    if (patientName.length < 4 || patientName.length > 12) {
+      setError(true);
+      setLoading(false);
+      const message = "Minimun  length must be 4\nMaximum length must be 8.";
+      setErrorMessage(message);
       return;
     }
 
@@ -44,7 +56,10 @@ export default function BookingComponent({
       slotTime: slot!,
       date,
       patientId: userId!,
+      patientName,
       gender,
+      fees,
+      currency: "INR",
       paymentMethod,
       onSuccess: () => {
         setLoading(false);
@@ -53,8 +68,8 @@ export default function BookingComponent({
       },
       onFailure: () => {
         setLoading(false);
-        toast.error("Payment Failed.Appointmented is created.");
-        router.push("/dashboard/user");
+        toast.error("Payment Failed.");
+        router.push("/user");
       },
     });
   };
@@ -96,9 +111,16 @@ export default function BookingComponent({
             <div className="flex flex-col gap-1">
               <label className="text-sm text-gray-600">Name</label>
               <input
+                type="text"
+                onChange={(e) => setPatientName(e.target.value)}
                 defaultValue={username}
                 className="border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
               />
+              {error ? (
+                <p className="text-sm text-red-600">{errorMessage}</p>
+              ) : (
+                <></>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">

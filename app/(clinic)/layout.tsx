@@ -1,4 +1,4 @@
-import { ClinicNavbar } from "@/component/clinic/Clinicnavbar";
+import { ClinicNavbar } from "@/component/clinic/ClinicNavbar";
 export default function ClinicLayout({
   children,
 }: {
@@ -6,10 +6,11 @@ export default function ClinicLayout({
 }) {
   return (
     <div className="flex flex-col">
-      <div className="bg-white border-r h-screen">
+      <div className="bg-white border-r">
         <ClinicNavbar />
       </div>
       <div>{children}</div>
     </div>
   );
 }
+    

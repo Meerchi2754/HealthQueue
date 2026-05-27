@@ -17,7 +17,7 @@ export function ClinicNavbar() {
         method: "POST",
       });
       toast.success("Logout Successfull");
-      router.push("/dashboard/user");
+      router.push("/user");
     } catch (error) {
       toast.error(`${error}`);
       console.log("Logout failed");

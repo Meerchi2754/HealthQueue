@@ -1,5 +1,5 @@
-import { Gender, PaymentMethod } from "@/app/generated/prisma/enums";
-import { createAppointment } from "@/services/createAppointment";
+import { Gender, PaymentMethod } from "@/prisma/generated/prisma/enums";
+import { createAppointment } from "@/services/users/createAppointment";
 export async function cashAppointment(
   userId: number,
   doctorId: number,
