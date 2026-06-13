@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 
-export default async function getDoctorName(id: number) {
+export async function getDoctorName(id: number) {
   const name = await prisma.users.findUnique({
     where: {
       id: id,

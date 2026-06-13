@@ -1,9 +1,9 @@
-import Appointment from "@/services/clinic/appointment";
+import { getAppointments } from "@/services/clinic/appointment";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const getAllAppointment = await Appointment();
+    const getAllAppointment = await getAppointments();
     if (!getAllAppointment) {
       return NextResponse.json(
         { message: "Failed to Fetch Appointment" },

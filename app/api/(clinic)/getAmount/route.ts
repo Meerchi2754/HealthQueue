@@ -1,4 +1,4 @@
-import revenueConfirm from "@/services/clinic/revenueConfirm";
+import { revenueConfirm } from "@/services/clinic/revenueConfirm";
 import { NextResponse } from "next/server";
 
 export async function GET() {

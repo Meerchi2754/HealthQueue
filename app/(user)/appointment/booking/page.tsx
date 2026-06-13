@@ -1,5 +1,5 @@
 import { BookingSearchParams } from "@/types";
-import getDoctorName from "@/services/users/getDoctorName";
+import { getDoctorName } from "@/services/users/getDoctorName";
 import { verifyCookie } from "@/utils/verifyCookie";
 import BookingComponent from "@/component/booking";
 

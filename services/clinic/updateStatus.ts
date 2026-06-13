@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { AppointmentStatus } from "@/prisma/generated/prisma/enums";
 
-export default async  function UpdateStatus(id: number, status: AppointmentStatus) {
+export async function updateStatus(id: number, status: AppointmentStatus) {
   const response = await prisma.appointment.update({
     where: {
       id: id,
