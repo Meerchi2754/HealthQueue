@@ -1,4 +1,4 @@
-import  Appointment  from "@/services/clinic/appointment";
+import Appointment from "@/services/clinic/appointment";
 import { NextResponse } from "next/server";
 
 export async function GET() {
