@@ -4,7 +4,7 @@ import {
 } from "@/prisma/generated/prisma/enums";
 import prisma from "@/lib/prisma";
 
-export default async function revenueConfirm() {
+export async function revenueConfirm() {
   const revenue = await prisma.payment.aggregate({
     _sum: {
       amount: true,

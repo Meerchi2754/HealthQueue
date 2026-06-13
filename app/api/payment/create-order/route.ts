@@ -1,6 +1,6 @@
 import Razorpay from "razorpay";
 import { NextRequest, NextResponse } from "next/server";
-import getDoctorName from "@/services/users/getDoctorName";
+import { getDoctorName } from "@/services/users/getDoctorName";
 import { PaymentMethod, Gender } from "@/prisma/generated/prisma/enums";
 
 const razorpay = new Razorpay({

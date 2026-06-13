@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 
-export default async function Appointment() {
+export async function getAppointments() {
   const response = await prisma.appointment.findMany({
     include: {
       doctor: {
